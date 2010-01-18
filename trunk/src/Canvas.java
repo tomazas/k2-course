@@ -35,7 +35,27 @@ public class Canvas extends JComponent{
     public void add_point(float xp, float yp, boolean mouse)
     {
         dirty = true;
-		if(mouse == true){            // transformuojam is ekrano lango i realius            this.x_orig[n] = xp/scale_x;            this.y_orig[n] = yp/scale_y;            // transformuoti nereikia, nes taskai atidedami 1:1 ekrane            this.x[n] = xp;            this.y[n] = yp;        }else{            // issaugom realias koordinates            this.x_orig[n] = xp;            this.y_orig[n] = yp;            // reikia transformuoti i ekrano langa            this.x[n] = xp*scale_x;            this.y[n] = yp*scale_y;        }        Rikiuoti();            // rikiavimas    }
+        if(mouse == true){
+            // transformuojam is ekrano lango i realius
+            this.x_orig[n] = xp/scale_x;
+            this.y_orig[n] = yp/scale_y;
+            // transformuoti nereikia, nes taskai atidedami 1:1 ekrane
+            this.x[n] = xp;
+            this.y[n] = yp;
+        }else{
+            // issaugom realias koordinates
+            this.x_orig[n] = xp;
+            this.y_orig[n] = yp;
+            // reikia transformuoti i ekrano langa
+            this.x[n] = xp*scale_x;
+            this.y[n] = yp*scale_y;
+        }
+
+        n += 1;
+
+        this.build();
+        this.repaint();
+    }
 
     // isvalo taskus
     public void clear(){ n = 0; this.repaint(); }
@@ -45,6 +65,8 @@ public class Canvas extends JComponent{
     {
         if(n < 2) return; // per mazai tasku, min 2
         dirty = false;
+
+        Rikiuoti();   // rikiavimas
 
         // 2-uju isvestiniu reiksmes x0 ir xn taskuose
         float m0 = 0;
@@ -131,6 +153,7 @@ public class Canvas extends JComponent{
             }
         }
     }
+    
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);
@@ -141,6 +164,7 @@ public class Canvas extends JComponent{
         drawDots(g);
         drawLines(g);
     }
+
     private void Rikiuoti()  {
         for ( int i = 0; i < n-1; i++ )
             for ( int j = 1; j < n; j++ )  {
@@ -153,9 +177,20 @@ public class Canvas extends JComponent{
 
                     y[i] = y[i+1];
                     y[i+1] = tempY;
+
+                    // originaliu koordinaciu rikiavimas
+                    tempX = x_orig[i];
+                    tempY = y_orig[i];
+
+                    x_orig[i] = x_orig[i+1];
+                    x_orig[i+1] = tempX;
+
+                    y_orig[i] = y_orig[i+1];
+                    y_orig[i+1] = tempY;
                 }
             }
     }
+    
     public int getn()  {
         return n;
     }
@@ -163,6 +198,7 @@ public class Canvas extends JComponent{
     public float getX(int sk)  {
         return x[sk];
     }
+    
     public float getY(int sk)  {
         return y[sk];
     }
