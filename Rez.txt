@@ -1,0 +1,7 @@
+Ivestos/Nurodytos koodrinates
+   X     Y
+    59    99
+   115   193
+   277   176
+   298    89
+   379   128

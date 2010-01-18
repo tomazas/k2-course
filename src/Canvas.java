@@ -23,6 +23,7 @@ public class Canvas extends JComponent{
         dirty = true;
         this.x[n] = xp;
         this.y[n++] = yp;
+        Rikiuoti();            // rikiavimas
         if(n>=2) build();
         else this.repaint();
     }
@@ -73,6 +74,32 @@ public class Canvas extends JComponent{
                 t += h;
             }
         }
+    }
+
+    private void Rikiuoti()  {
+        for ( int i = 0; i < n-1; i++ )
+            for ( int j = 1; j < n; j++ )  {
+                if ( x[i] > x[i+1] )  {
+                    float tempX = x[i];
+                    float tempY = y[i];
+
+                    x[i] = x[i+1];
+                    x[i+1] = tempX;
+
+                    y[i] = y[i+1];
+                    y[i+1] = tempY;
+                }
+            }
+    }
+    public int getn()  {
+        return n;
+    }
+
+    public float getX(int sk)  {
+        return x[sk];
+    }
+    public float getY(int sk)  {
+        return y[sk];
     }
 
 }
