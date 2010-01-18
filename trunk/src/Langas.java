@@ -10,7 +10,8 @@ public class Langas extends JFrame{
 
     final int WIDTH = 500;
     final int HEIGHT = 400;
-    Canvas canvas = new Canvas();
+    Canvas canvas = new Canvas(WIDTH, HEIGHT);
+    JFrame frame = this;
 
     public Langas(){
         super("Kubinio splaino generavimas");
@@ -43,13 +44,11 @@ public class Langas extends JFrame{
             public void mousePressed(MouseEvent e){
                 switch(e.getButton()){
                 case MouseEvent.BUTTON1:
-                    canvas.add_point(e.getX(), e.getY());
+                    canvas.add_point(e.getX(), e.getY(), true);
                     break;
-                    
                 case MouseEvent.BUTTON3:
                     canvas.clear();
                     break;
-                    
                 default: break;
                 }
             }
@@ -57,6 +56,19 @@ public class Langas extends JFrame{
             public void mouseEntered(MouseEvent e){}
             public void mouseExited(MouseEvent e){}
         });
+
+        // resize check
+        this.addComponentListener(new ComponentListener(){
+            public void componentResized(ComponentEvent e){
+                canvas.setBounds(0,0,frame.getWidth(),frame.getHeight());
+                canvas.rescale();
+            }
+            public void componentMoved(ComponentEvent e){}
+            public void componentShown(ComponentEvent e){}
+            public void componentHidden(ComponentEvent e){}
+        });
+
+        // close
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.add(canvas);
 
