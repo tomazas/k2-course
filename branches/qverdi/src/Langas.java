@@ -28,7 +28,7 @@ public class Langas extends JFrame{
             public void mousePressed(MouseEvent e){
                 switch(e.getButton()){
                 case MouseEvent.BUTTON1:
-                    canvas.add_point(e.getX(), e.getY(), true);
+                    if(canvas.is_mouse()) canvas.add_point(e.getX(), e.getY(), true);
                     break;
                 case MouseEvent.BUTTON3:
                     canvas.clear();

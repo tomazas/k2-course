@@ -183,14 +183,10 @@ public class Panel extends JFrame{
 
                                 PrintWriter rasymui;
                                 rasymui = new PrintWriter(failas);
-                                rasymui.println("Ivestos/Nurodytos koodrinates");
-                                rasymui.println("   X     Y");
-                                for (int i = 0; i < self.canvas.getn(); i ++ )  {
-                                    rasymui.print( ilgioFormatas( (int)self.canvas.getX(i), 6) );
-                                    rasymui.print( ilgioFormatas( (int)self.canvas.getY(i), 6) );
-                                    rasymui.println();
-                                }
-
+                                //rasymui.println("Ivestos/Nurodytos koodrinates");
+                                //rasymui.println("   X     Y");
+                                for (int i = 0; i < self.canvas.getn(); i ++ )
+                                    rasymui.printf("%.6f %.6f\n", self.canvas.getX(i), self.canvas.getY(i));
                                 rasymui.flush();
                             }
                             catch ( NumberFormatException a )  {
@@ -208,6 +204,7 @@ public class Panel extends JFrame{
 			}
                  }
          );
+
 
         normal.addActionListener(
 		new ActionListener(){
@@ -254,6 +251,7 @@ public class Panel extends JFrame{
         pele.addActionListener(
 		new ActionListener(){
 			public void actionPerformed(ActionEvent e)  {
+                            self.canvas.set_mouse(true);
                             pele.setSelected(true);
                             klav.setSelected(false);
                             taskx.setEnabled(false);
@@ -268,6 +266,7 @@ public class Panel extends JFrame{
         klav.addActionListener(
 		new ActionListener(){
 			public void actionPerformed(ActionEvent e)  {
+                            self.canvas.set_mouse(false);
                             pele.setSelected(false);
                             klav.setSelected(true);
                             taskx.setEnabled(true);
@@ -283,8 +282,8 @@ public class Panel extends JFrame{
 		new ActionListener(){
 			public void actionPerformed(ActionEvent e)  {
                             try  {
-                                int x = Integer.parseInt( taskasX.getText() );
-                                int y = Integer.parseInt( taskasY.getText() );
+                                float x = Float.parseFloat( taskasX.getText() );
+                                float y = Float.parseFloat( taskasY.getText() );
                                 
                                 self.canvas.add_point(x, y, false);
                             }  catch ( NumberFormatException a )  {
