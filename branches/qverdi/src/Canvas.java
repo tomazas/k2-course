@@ -5,29 +5,56 @@ import javax.swing.*;
 
 public class Canvas extends JComponent{
 
-    Splainas sp = new Splainas();
-    int N = 100; // TODO: change to dynamic size
-    float x_orig[] = new float[N];
-    float y_orig[] = new float[N];
-   
-    // transformuoti taskai
-    float x[] = new float[N];
-    float y[] = new float[N];
-    float m[] = new float[N];
+    private Splainas sp = new Splainas();
     
-    int n = 0; // tasku skaicius
-    boolean dirty = true; // ar reikia per-generuoti splaina?
+    private int N = 300; // TODO: change to dynamic size
+    private float x_orig[] = new float[N];
+    private float y_orig[] = new float[N];
+   
+    // transformuoti (i ekrana) taskai
+    private float x[] = new float[N];
+    private float y[] = new float[N];
+    private float m[] = new float[N];
+    
+    private int n = 0; // tasku skaicius
+    private boolean dirty = true; // ar reikia per-generuoti splaina?
 
-    // scaling factors
-    float scale_x = 1.0f;
-    float scale_y = 1.0f;
-    int defaultWidth; // standartine ekrano rezoliucija
-    int defaultHeight;
+    // ekrano deze
+    private float boundsXMin;
+    private float boundsXMax;
+    private float boundsYMin;
+    private float boundsYMax;
    
     public Canvas(int scr_width, int scr_height){
         super();
-        defaultWidth = scr_width;
-        defaultHeight = scr_height;
+        this.set_bounds(-1, -1, 1, 1);
+    }
+
+    // nustato funkcijos ribas
+    public void set_bounds(float xMin, float yMin, float xMax, float yMax)
+    {
+        float borderX = (xMax - xMin) * 0.1f;
+        float borderY = (yMax - yMin) * 0.1f;
+        // + 10% laisvo ploto aplink
+        boundsXMin = xMin - borderX;
+        boundsYMin = yMin - borderY;
+        boundsXMax = xMax + borderX;
+        boundsYMax = yMax + borderY;
+        this.rescale();
+    }
+
+    // transformuoja is funkcijos lenteles koordinaciu i ekrano koordinates
+    public void transf_iEkrana(float x, float y, float[] out)
+    {
+        out[0] = (x - boundsXMin)/(boundsXMax - boundsXMin) * this.getWidth();
+        out[1] = (y - boundsYMin)/(boundsYMax - boundsYMin) * this.getHeight();
+    }
+
+    //transformuoja is ekrano koordinaciu i funckcijos lenteles koordinates
+    public void transf_iFunc(float x, float y, float[] out)
+    {
+        out[0] = x * (boundsXMax - boundsXMin)/(float)this.getWidth() + boundsXMin;
+        out[1] = y * (boundsYMax - boundsYMin)/(float)this.getHeight() + boundsYMin;
     }
 
     // prideda nauja taska
@@ -37,8 +64,10 @@ public class Canvas extends JComponent{
         dirty = true;
         if(mouse == true){
             // transformuojam is ekrano lango i realius
-            this.x_orig[n] = xp/scale_x;
-            this.y_orig[n] = yp/scale_y;
+            float o[] = new float[2];
+            this.transf_iFunc(xp, yp, o);
+            this.x_orig[n] = o[0];
+            this.y_orig[n] = o[1];
             // transformuoti nereikia, nes taskai atidedami 1:1 ekrane
             this.x[n] = xp;
             this.y[n] = yp;
@@ -47,8 +76,10 @@ public class Canvas extends JComponent{
             this.x_orig[n] = xp;
             this.y_orig[n] = yp;
             // reikia transformuoti i ekrano langa
-            this.x[n] = xp*scale_x;
-            this.y[n] = yp*scale_y;
+            float o[] = new float[2];
+            this.transf_iEkrana(xp, yp, o);
+            this.x[n] = o[0];
+            this.y[n] = o[1];
         }
 
         n += 1;
@@ -79,14 +110,12 @@ public class Canvas extends JComponent{
     // perskaiciuoja ekrado zoom'a
     public void rescale()
     {
-        // perskaiciuojam zoom'a
-        scale_x = this.getWidth()/(float)defaultWidth;
-        scale_y = this.getHeight()/(float)defaultHeight;
-
         // transformuojam taskus
+        float o[] = new float[2];
         for(int i=0; i<n; i++){
-            x[i] = x_orig[i]*scale_x;
-            y[i] = y_orig[i]*scale_y;
+            this.transf_iEkrana(x_orig[i], y_orig[i], o);
+            x[i] = o[0];
+            y[i] = o[1];
         }
 
         this.build();
@@ -112,9 +141,18 @@ public class Canvas extends JComponent{
         int hm = Math.round(h*y_marker);
         int step = w/count;
 
-        for(int i=0; i<count; i++){
-            g.drawLine(mid_w-hm/2, i*step, mid_w+hm/2, i*step);
+       // float xmin = boundsXMin;
+       // float ymin = boundsYMin;
+       // float x_step = (boundsXMax - boundsXMin)/(float)count;
+       // float y_step = (boundsYMax - boundsYMin)/(float)count;
+        for(int i=0; i<=count; i++){
+            g.drawLine(mid_w-hm/2, i*step, mid_w+hm/2, i*step); // y-asis
             g.drawLine(i*step, mid_h-hm/2, i*step, mid_h+hm/2); // x-asis
+            // tekstas
+            // g.drawString(Float.toString(Math.round(xmin*100)/100.0f), i*step-hm/2, mid_h+hm);
+           // g.drawString(Float.toString(Math.round(ymin*100)/100.0f), mid_w+hm, i*step+hm/2);
+           // xmin += x_step;
+           // ymin += y_step;
         }
     }
 
@@ -139,18 +177,16 @@ public class Canvas extends JComponent{
         float h = 0.01f; // zingsnis
         g.setColor(Color.blue);
 
-        if(dirty == false) // taskai nepasikeite
+        if(dirty == true) return;// taskai pasikeite
+        while(t < x[n-1]-h)
         {
-            while(t < x[n-1]-h)
-            {
-                float t1 = t+h;
-                int x0 = Math.round(t);
-                int x1 = Math.round(t+h);
-                int y0 = Math.round(sp.g(n, x, y, m, t));
-                int y1 = Math.round(sp.g(n, x, y, m, t1));
-                g.drawLine(x0, y0, x1, y1);
-                t += h;
-            }
+            float t1 = t+h;
+            int x0 = Math.round(t);
+            int x1 = Math.round(t+h);
+            int y0 = Math.round(sp.g(n, x, y, m, t));
+            int y1 = Math.round(sp.g(n, x, y, m, t1));
+            g.drawLine(x0, y0, x1, y1);
+            t += h;
         }
     }
     
@@ -169,7 +205,7 @@ public class Canvas extends JComponent{
 
         for ( int i = 0; i < n-1; i++ )
             for ( int j = i+1; j < n; j++ ){
-                if ( x[i] > x[j] )  {
+                if ( x[i] > x[j] + 1e-6f )  {
                     float tempX = x[j];
                     float tempY = y[j];
 
@@ -195,10 +231,10 @@ public class Canvas extends JComponent{
     }
 
     public float getX(int sk)  {
-        return x[sk];
+        return x_orig[sk];
     }
     
     public float getY(int sk)  {
-        return y[sk];
+        return y_orig[sk];
     }
 }

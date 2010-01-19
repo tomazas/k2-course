@@ -7,9 +7,9 @@ public class Langas extends JFrame{
 
     final int WIDTH = 500;
     final int HEIGHT = 400;
-    Canvas canvas = new Canvas(WIDTH, HEIGHT);
-    JFrame frame = this;
-    Panel panel = null;
+    private Canvas canvas = new Canvas(WIDTH, HEIGHT);
+    private JFrame frame = this;
+    private Panel panel = null;
 
     public Langas(){
         super("Kubinis splainas");
@@ -56,6 +56,20 @@ public class Langas extends JFrame{
             }
             public void componentShown(ComponentEvent e){}
             public void componentHidden(ComponentEvent e){}
+        });
+
+        this.addWindowListener(new WindowListener(){
+            public void windowOpened(WindowEvent e){}
+            public void windowClosing(WindowEvent e){}
+            public void windowClosed(WindowEvent e){}
+            public void windowIconified(WindowEvent e){
+                panel.setExtendedState(panel.getExtendedState() | Frame.ICONIFIED);
+            }
+            public void windowDeiconified(WindowEvent e){
+                panel.setExtendedState(panel.getExtendedState() & ~Frame.ICONIFIED);
+            }
+            public void windowActivated(WindowEvent e){}
+            public void windowDeactivated(WindowEvent e){}
         });
 
         // close
