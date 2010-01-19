@@ -8,7 +8,7 @@ public class Splainas {
     {
         float s[] = new float[n+2];
         float e[] = new float[n+2];
-            // e, s - temp matrica (float[101])
+        // e, s - temp matrica
         s[1] = 0.0f;
         e[1] = 0.0f;
 
@@ -35,22 +35,33 @@ public class Splainas {
         float c[] = new float[n+1];
         float d[] = new float[n+1];
         float h[] = new float[n+1];
+        
+        /*
+        
+          A matrica:
+        	
+        	|a b c      |
+        	| a b c     |
+        	|   ...     |
+        	|    a b c  |
+        	|     a b c |
+        
+        */
 
         // a,b,c,d,h - temp masyvai
         // A*m=H*y formavimas
         for(int i=1; i<=n; i++) h[i] = x[i] - x[i-1];
         for(int i=1; i<n; i++){
-        	/*if(i==1) a[i] = 0.0f; else*/ a[i] = h[i]/6.0f;
+        	    if(i==1) a[i] = 0.0f; else a[i] = h[i]/6.0f;
                 b[i] = -(h[i]+h[i+1])/3.0f;
-                /*if(i==n-1) c[i] = 0.0f; else*/ c[i] = h[i+1]/6.0f;
+                if(i==n-1) c[i] = 0.0f; else c[i] = h[i+1]/6.0f;
                 d[i] = y[i-1]/h[i] - y[i]/h[i] - y[i]/h[i+1] + y[i+1]/h[i+1];
         }
         d[1] = d[1]-m0*h[1]/6.0f;
         d[n-1] = d[n-1] - mn*h[n]/6.0f;
 
         // sistemos sprendimas
-        int n1 = n-1;
-        spresti(n1, a, b, c, d, m);
+        spresti(n-1, a, b, c, d, m);
         m[0] = m0;
         m[n] = mn;
     }
@@ -58,7 +69,7 @@ public class Splainas {
     public float g(int n, float x[], float y[], float m[], float t)
     {
         if(t < x[0] || t > x[n-1]) return 0.0f;
-
+        
         int i = 1;
         while(x[i] < t) i++;
         float h = x[i] - x[i-1];
