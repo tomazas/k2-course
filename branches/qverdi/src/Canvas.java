@@ -166,27 +166,26 @@ public class Canvas extends JComponent{
     }
 
     private void Rikiuoti()  {
+
         for ( int i = 0; i < n-1; i++ )
-            for ( int j = 1; j < n; j++ )  {
-                if ( x[i] > x[i+1] )  {
-                    float tempX = x[i];
-                    float tempY = y[i];
+            for ( int j = i+1; j < n; j++ ){
+                if ( x[i] > x[j] )  {
+                    float tempX = x[j];
+                    float tempY = y[j];
 
-                    x[i] = x[i+1];
-                    x[i+1] = tempX;
-
-                    y[i] = y[i+1];
-                    y[i+1] = tempY;
+                    x[j] = x[i];
+                    y[j] = y[i];
+                    x[i] = tempX;
+                    y[i] = tempY;
 
                     // originaliu koordinaciu rikiavimas
-                    tempX = x_orig[i];
-                    tempY = y_orig[i];
+                    tempX = x_orig[j];
+                    tempY = y_orig[j];
 
-                    x_orig[i] = x_orig[i+1];
-                    x_orig[i+1] = tempX;
-
-                    y_orig[i] = y_orig[i+1];
-                    y_orig[i+1] = tempY;
+                    x_orig[j] = x_orig[i];
+                    y_orig[j] = y_orig[i];
+                    x_orig[i] = tempX;
+                    y_orig[i] = tempY;
                 }
             }
     }
