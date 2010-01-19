@@ -12,6 +12,10 @@ public class Panel extends JFrame{
     Canvas canvas = null;
     Langas langas = null;
     Panel self = this;
+    JButton ivesti;
+    JRadioButton normal, pirmos, antros, pele, klav;
+    JLabel taskmo, taskmn, taskx, tasky;
+    JTextField taskasmo, taskasmn, taskasX, taskasY;
     
     public Panel(Langas frame, Canvas canvas)
     {
@@ -26,6 +30,10 @@ public class Panel extends JFrame{
         int cy = langas.getY();
         this.setBounds(cx,cy,WIDTH,HEIGHT);
 
+        //
+        //  meniu
+        //
+        
         // menu juostos formavimas
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
@@ -41,6 +49,98 @@ public class Panel extends JFrame{
 
         //JMenuItem menuParinktys = new JMenu("Parinktys");
         //menuBar.add(menuParinktys);
+
+        //
+        //            normaliosios, pirmosios, antrosios
+        //
+
+        normal = new JRadioButton("Normalios salygos");
+        self.add(normal);
+        normal.setBounds(10, 30, 150, 20);
+        normal.setSelected(true);
+
+        pirmos = new JRadioButton("Pirmosios isvestines");
+        self.add(pirmos);
+        pirmos.setBounds(10, 50, 150, 20);
+        pirmos.setSelected(false);
+
+        antros = new JRadioButton("Antrosios isvestines");
+        self.add(antros);
+        antros.setBounds(10, 70, 150, 20);
+        antros.setSelected(false);
+
+        pele = new JRadioButton("Pele");
+        self.add(pele);
+        pele.setBounds(10, 180, 150, 20);
+        pele.setSelected(true);
+
+        klav = new JRadioButton("Klaviatura");
+        self.add(klav);
+        klav.setBounds(10, 200, 150, 20);
+
+        //
+        //            info labels
+        //
+
+        JLabel salygos = new JLabel( "Krastines salygos ");
+        self.add(salygos);
+        salygos.setBounds(5, 5, 150, 20);
+
+        taskmo = new JLabel("m(o)");
+        self.add(taskmo);
+        taskmo.setBounds(30, 100, 30, 20);
+        taskmo.setEnabled(false);
+
+        taskmn = new JLabel("m(n)");
+        self.add(taskmn);
+        taskmn.setBounds(30, 120, 30, 20);
+        taskmn.setEnabled(false);
+
+        JLabel taskgen = new JLabel("Tasku generavimas");
+        self.add(taskgen);
+        taskgen.setBounds(5, 160, 150, 20);
+
+        taskx = new JLabel("x");
+        self.add(taskx);
+        taskx.setBounds(30, 220, 15, 20);
+        taskx.setEnabled(false);
+
+        tasky = new JLabel("y");
+        self.add(tasky);
+        tasky.setBounds(30, 240, 15, 20);
+        tasky.setEnabled(false);
+
+        //
+        //             TextFields
+        //
+        taskasmo = new JTextField();
+        self.add(taskasmo);
+        taskasmo.setBounds(65, 100, 40, 20);
+        taskasmo.setEnabled(false);
+
+        taskasmn = new JTextField();
+        self.add(taskasmn);
+        taskasmn.setBounds(65, 120, 40, 20);
+        taskasmn.setEnabled(false);
+
+        taskasX = new JTextField();
+        self.add(taskasX);
+        taskasX.setBounds(50, 220, 40, 20);
+        taskasX.setEnabled(false);
+
+        taskasY = new JTextField();
+        self.add(taskasY);
+        taskasY.setBounds(50, 240, 40, 20);
+        taskasY.setEnabled(false);
+
+        //
+        //          mygtukas
+        //
+        ivesti = new JButton("Ivesti");
+        self.add(ivesti);
+        ivesti.setBounds(30, 260, 80, 20);
+        ivesti.setEnabled(false);
+
 
                 // Open listener
         menuFailaiIsFailo.addActionListener(
@@ -83,10 +183,10 @@ public class Panel extends JFrame{
                                 PrintWriter rasymui;
                                 rasymui = new PrintWriter(failas);
                                 rasymui.println("Ivestos/Nurodytos koodrinates");
-                                rasymui.println("   X     Y");
+                                rasymui.println("   X       Y");
                                 for (int i = 0; i < self.canvas.getn(); i ++ )  {
-                                    rasymui.print( ilgioFormatas( (int)self.canvas.getX(i), 6) );
-                                    rasymui.print( ilgioFormatas( (int)self.canvas.getY(i), 6) );
+                                    rasymui.print( ilgioFormatas( self.canvas.getX(i), 6) );
+                                    rasymui.print( ilgioFormatas( self.canvas.getY(i), 8) );
                                     rasymui.println();
                                 }
 
@@ -107,6 +207,95 @@ public class Panel extends JFrame{
 			}
                  }
          );
+        
+
+        normal.addActionListener(
+		new ActionListener(){
+			public void actionPerformed(ActionEvent e)  {
+                            normal.setSelected(true);
+                            pirmos.setSelected(false);
+                            antros.setSelected(false);
+                            taskmo.setEnabled(false);
+                            taskmn.setEnabled(false);
+                            taskasmo.setEnabled(false);;
+                            taskasmn.setEnabled(false);
+			}
+                 }
+         );
+
+        antros.addActionListener(
+		new ActionListener(){
+			public void actionPerformed(ActionEvent e)  {
+                            normal.setSelected(false);
+                            pirmos.setSelected(false);
+                            antros.setSelected(true);
+                            taskmo.setEnabled(true);
+                            taskmn.setEnabled(true);
+                            taskasmo.setEnabled(true);
+                            taskasmn.setEnabled(true);
+			}
+                 }
+         );
+
+        pirmos.addActionListener(
+		new ActionListener(){
+			public void actionPerformed(ActionEvent e)  {
+                            normal.setSelected(false);
+                            pirmos.setSelected(true);
+                            antros.setSelected(false);
+                            taskmo.setEnabled(true);
+                            taskmn.setEnabled(true);
+                            taskasmo.setEnabled(true);
+                            taskasmn.setEnabled(true);
+			}
+                 }
+         );
+
+        pele.addActionListener(
+		new ActionListener(){
+			public void actionPerformed(ActionEvent e)  {
+                            pele.setSelected(true);
+                            klav.setSelected(false);
+                            taskx.setEnabled(false);
+                            tasky.setEnabled(false);
+                            taskasX.setEnabled(false);
+                            taskasY.setEnabled(false);
+                            ivesti.setEnabled(false);
+			}
+                 }
+         );
+
+        klav.addActionListener(
+		new ActionListener(){
+			public void actionPerformed(ActionEvent e)  {
+                            pele.setSelected(false);
+                            klav.setSelected(true);
+                            taskx.setEnabled(true);
+                            tasky.setEnabled(true);
+                            taskasX.setEnabled(true);
+                            taskasY.setEnabled(true);
+                            ivesti.setEnabled(true);
+			}
+                 }
+         );
+
+        ivesti.addActionListener(
+		new ActionListener(){
+			public void actionPerformed(ActionEvent e)  {
+                            try  {
+                                int x = Integer.parseInt( taskasX.getText() );
+                                int y = Integer.parseInt( taskasY.getText() );
+                                
+                                self.canvas.add_point(x, y, false);
+                            }  catch ( NumberFormatException a )  {
+                                    JOptionPane.showMessageDialog(null, "Neteisingai ivesti duomenys",
+		"Klaida", JOptionPane.ERROR_MESSAGE);
+                            }
+                            
+			}
+                 }
+         );
+
 
          /*
         JButton btn = new JButton("Build");
@@ -151,9 +340,9 @@ public class Panel extends JFrame{
         return failas;
     }
 
-    public String ilgioFormatas( int sk, int formatas )  {
+    public String ilgioFormatas( float sk, int formatas )  {
         //formatuoja duota skaiciu i tam tikro ilgio formata
-        String skaicius = Integer.toString(sk);
+        String skaicius = Float.toString(sk);
         int skaiciausIlgis = formatas - skaicius.length();
         while ( skaiciausIlgis > 0 )  {
             skaicius = " " + skaicius;
