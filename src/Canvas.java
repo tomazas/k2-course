@@ -6,6 +6,8 @@ import javax.swing.*;
 public class Canvas extends JComponent{
 
     private Splainas sp = new Splainas();
+    private SplineCode sc = new SplineCode();
+    private spline1dinterpolant si = new spline1dinterpolant();
     
     private int N = 300; // TODO: change to dynamic size
     private float x_orig[] = new float[N];
@@ -21,14 +23,14 @@ public class Canvas extends JComponent{
 
     private boolean bMouseActive = true;
 
-    enum DerivType{
+    public enum DerivType{
         NATURAL,
         FIRST,
         SECOND,
     };
 
     // isvestiniu reiksmes
-    private DerivType type;
+    private DerivType m_type = DerivType.NATURAL;
     private float m0 = 0.0f;
     private float mn = 0.0f;
 
@@ -44,9 +46,9 @@ public class Canvas extends JComponent{
     }
 
     // nustato isvestiniu reiksmes
-    private void set_deriv(DerivType type, float m0, float mn)
+    public void set_deriv(DerivType type, float m0, float mn)
     {
-        this.type = type;
+        this.m_type = type;
         this.m0 = m0;
         this.mn = mn;
     }
@@ -76,24 +78,6 @@ public class Canvas extends JComponent{
         this.rescale();
     }
 
-    // perskaiciuoja ekrano funkcijos ribas
-    /*public void rebuild_bounds()
-    {
-        boundsXMin = 9999999;
-        boundsYMin = 9999999;
-        boundsXMax = -boundsXMin;
-        boundsYMax = -boundsYMin;
-
-        for(int i=0; i<n; i++){
-            if(x_orig[i] < boundsXMin) boundsXMin = x_orig[i];
-            if(x_orig[i] > boundsXMax) boundsXMax = x_orig[i];
-            if(y_orig[i] < boundsYMin) boundsYMin = y_orig[i];
-            if(y_orig[i] > boundsYMax) boundsYMax = y_orig[i];
-        }
-
-        this.set_bounds(boundsXMin, boundsYMin, boundsXMax, boundsYMax);
-    }*/
-
     // transformuoja is funkcijos lenteles koordinaciu i ekrano koordinates
     public void transf_iEkrana(float x, float y, float[] out)
     {
@@ -101,7 +85,7 @@ public class Canvas extends JComponent{
         out[1] = this.getHeight() - (y - boundsYMin)/(boundsYMax - boundsYMin) * this.getHeight();
     }
 
-    //transformuoja is ekrano koordinaciu i funckcijos lenteles koordinates
+    //transformuoja is ekrano koordinaciu i funkcijos lenteles koordinates
     public void transf_iFunc(float x, float y, float[] out)
     {
         out[0] = x * (boundsXMax - boundsXMin)/(float)this.getWidth() + boundsXMin;
@@ -151,7 +135,15 @@ public class Canvas extends JComponent{
         Rikiuoti();   // rikiavimas
 
         // generuojame
-        sp.spline(n-1, m0, mn, x, y, m);
+        //sp.spline(n-1, m0, mn, x, y, m);
+
+        int sp_type = 2; // splaino 2-uju isvestiniu tipas
+        if(this.m_type == DerivType.FIRST )
+            sp_type = 1;
+        else if(this.m_type == DerivType.NATURAL)
+            m0 = mn = 0.0f;
+      
+        si = sc.spline1dbuildcubic(x, y, n, sp_type, m0, sp_type, mn, si);
         
         this.repaint();// reikalinga perpiesti
     }
@@ -197,12 +189,16 @@ public class Canvas extends JComponent{
             // tekstas
             g.drawString(Float.toString(Math.round(ymin*100)/100.0f), mid_w+hm*2, i*step_h+hm/2);
 
-            xmin += x_step;
             ymin -= y_step;
             
-            if(i == count/2) continue;
+            if(i == count/2){
+                xmin += x_step;
+                continue;
+            }
+            
             // tekstas
             g.drawString(Float.toString(Math.round(xmin*100)/100.0f), i*step_w-hm, mid_h+hm*4);
+            xmin += x_step;
 
             // markeriai
             g.drawLine(mid_w-hm, (int)(i*step_h), mid_w+hm, (int)(i*step_h)); // y-asis
@@ -240,8 +236,10 @@ public class Canvas extends JComponent{
             float t1 = t+h;
             int x0 = Math.round(t);
             int x1 = Math.round(t+h);
-            int y0 = Math.round(sp.g(n, x, y, m, t));
-            int y1 = Math.round(sp.g(n, x, y, m, t1));
+            //int y0 = Math.round(sp.g(n, x, y, m, t));
+            //int y1 = Math.round(sp.g(n, x, y, m, t1));
+            int y0 = Math.round((float)sc.spline1dcalc(si, x0));
+            int y1 = Math.round((float)sc.spline1dcalc(si, x1));
             g.drawLine(x0, y0, x1, y1);
             t += h;
         }
