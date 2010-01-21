@@ -135,15 +135,12 @@ public class Canvas extends JComponent{
         Rikiuoti();   // rikiavimas
 
         // generuojame
-        //sp.spline(n-1, m0, mn, x, y, m);
-
-        int sp_type = 2; // splaino 2-uju isvestiniu tipas
-        if(this.m_type == DerivType.FIRST )
-            sp_type = 1;
+        if(this.m_type == DerivType.FIRST)
+            sp.spline_1s(n-1, m0, mn, x, y, m);
         else if(this.m_type == DerivType.NATURAL)
-            m0 = mn = 0.0f;
-      
-        si = sc.spline1dbuildcubic(x, y, n, sp_type, m0, sp_type, mn, si);
+            sp.spline_2s(n-1, 0.0f, 0.0f, x, y, m);
+        else
+            sp.spline_2s(n-1, m0, mn, x, y, m);
         
         this.repaint();// reikalinga perpiesti
     }
@@ -236,10 +233,8 @@ public class Canvas extends JComponent{
             float t1 = t+h;
             int x0 = Math.round(t);
             int x1 = Math.round(t+h);
-            //int y0 = Math.round(sp.g(n, x, y, m, t));
-            //int y1 = Math.round(sp.g(n, x, y, m, t1));
-            int y0 = Math.round((float)sc.spline1dcalc(si, x0));
-            int y1 = Math.round((float)sc.spline1dcalc(si, x1));
+            int y0 = Math.round(sp.eval(n, x, y, m, t));
+            int y1 = Math.round(sp.eval(n, x, y, m, t1));
             g.drawLine(x0, y0, x1, y1);
             t += h;
         }
