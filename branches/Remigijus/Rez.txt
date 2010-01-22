@@ -1,6 +1,0 @@
-Ivestos/Nurodytos koodrinates
-   X       Y
-  44.0    57.0
-  65.0   243.0
- 191.0   135.0
- 274.0    80.0
