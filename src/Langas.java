@@ -21,7 +21,7 @@ public class Langas extends JFrame{
         int cx = dim.width/2;
         int cy = dim.height/2;
         this.setBounds(cx-WIDTH/2,cy-HEIGHT/2,WIDTH,HEIGHT);
-        
+
         canvas.setBounds(0,0,WIDTH,HEIGHT);
         canvas.addMouseListener(new MouseListener(){
             public void mouseClicked(MouseEvent e){}
@@ -80,5 +80,5 @@ public class Langas extends JFrame{
         this.setVisible(true);
         this.repaint();
     }
-    
+
 }
