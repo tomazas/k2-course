@@ -173,6 +173,10 @@ public class Canvas extends JComponent{
     // piesia koordinaciu asis
     public void drawAxes(Graphics g)
     {
+        // tinklelis
+        int count = 6;
+        drawGrid(g, count);
+
         int w = this.getWidth();
         int h = this.getHeight();
         int mid_w = this.getWidth()/2;
@@ -181,8 +185,7 @@ public class Canvas extends JComponent{
         g.drawLine(0, mid_h, w, mid_h); // x-asis
         g.drawLine(mid_w, 0, mid_w, h); // y-asis
 
-        // markeriai
-        int count = 6;
+        // markeriai        
         float y_marker = 0.02f;// 0.02% ekrano
         int hm = Math.round(h*y_marker)/2;
         int step_w = w/count;
@@ -192,7 +195,9 @@ public class Canvas extends JComponent{
         float ymin = boundsYMax;
         float x_step = (boundsXMax - boundsXMin)/(float)count;
         float y_step = (boundsYMax - boundsYMin)/(float)count;
-        
+
+        xmin -= x_step;
+
         for(int i=0; i <= count; i++){
             // tekstas
             g.drawString(Float.toString(Math.round(ymin*100)/100.0f), mid_w+hm*2, i*step_h+hm/2);
@@ -246,6 +251,31 @@ public class Canvas extends JComponent{
             t += h;
         }
     }
+
+    public void drawGrid( Graphics g, int count )  {
+        int width = this.getWidth();
+        int height = this.getHeight();
+        int step_w = (int)width/count;
+        int step_h = (int)height/count;
+
+        Color origColor = g.getColor();
+        g.setColor( Color.LIGHT_GRAY );
+
+        for ( int i = 0; i <= count; i++ )  {
+            if ( i != 3 )  {        // i != 3 reiskia nepiesia ant pagrindiniu asiu
+                // y sub asys
+                g.drawLine(0, (int)(i*step_h), width, (int)(i*step_h) );
+                g.drawLine(0, (int)(i*step_h+step_h/2), width, (int)(i*step_h+step_h/2) );
+                // x subasys
+                g.drawLine( (int)(i*step_w), 0, (int)(i*step_w), height );
+                g.drawLine( (int)(i*step_w+step_w/2), 0, (int)(i*step_w+step_w/2), height );
+            }  else  {
+                g.drawLine(0, (int)(i*step_h+step_h/2), width, (int)(i*step_h+step_h/2) );
+                g.drawLine( (int)(i*step_w+step_w/2), 0, (int)(i*step_w+step_w/2), height );
+            }
+        }
+        g.setColor(origColor);
+    }
     
     public void paintComponent(Graphics g)
     {
@@ -260,6 +290,13 @@ public class Canvas extends JComponent{
 
     private void Rikiuoti()  {
 
+        System.out.println("===============================================================");
+        System.out.println("===============================================================");
+        System.out.println();
+        System.out.println();
+        System.out.println("                             Pries rikiavima. x, y, orig_x, orig_y");
+        System.out.println();
+        PrintXY();
         for ( int i = 0; i < n-1; i++ )
             for ( int j = i+1; j < n; j++ ){
                 if ( x[i] > x[j] + 1e-6f )  {
@@ -281,6 +318,10 @@ public class Canvas extends JComponent{
                     y_orig[i] = tempY;
                 }
             }
+        System.out.println();
+        System.out.println("                             Po rikiavimo");
+        System.out.println();
+        PrintXY();
     }
     
     public int getn()  {
@@ -293,5 +334,11 @@ public class Canvas extends JComponent{
     
     public float getY(int sk)  {
         return y_orig[sk];
+    }
+
+    private void PrintXY()  {
+        for (  int i =0; i < n; i++ )  {
+            System.out.println( x[i]+"           "+y[i]+"           "+x_orig[i]+"           "+y_orig[i] );
+        }
     }
 }
