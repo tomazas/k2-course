@@ -1,11 +1,13 @@
 
-
 import java.awt.*;
 import javax.swing.*;
+
 
 public class Canvas extends JComponent{
 
     private Splainas sp = new Splainas();
+    private SplineCode sc = new SplineCode();
+    private spline1dinterpolant si = new spline1dinterpolant();
     
     private int N = 300; // TODO: change to dynamic size
     private float x_orig[] = new float[N];
@@ -21,14 +23,14 @@ public class Canvas extends JComponent{
 
     private boolean bMouseActive = true;
 
-    enum DerivType{
+    public enum DerivType{
         NATURAL,
         FIRST,
         SECOND,
     };
 
     // isvestiniu reiksmes
-    private DerivType type;
+    private DerivType m_type = DerivType.NATURAL;
     private float m0 = 0.0f;
     private float mn = 0.0f;
 
@@ -44,9 +46,9 @@ public class Canvas extends JComponent{
     }
 
     // nustato isvestiniu reiksmes
-    private void set_deriv(DerivType type, float m0, float mn)
+    public void set_deriv(DerivType type, float m0, float mn)
     {
-        this.type = type;
+        this.m_type = type;
         this.m0 = m0;
         this.mn = mn;
     }
@@ -76,24 +78,6 @@ public class Canvas extends JComponent{
         this.rescale();
     }
 
-    // perskaiciuoja ekrano funkcijos ribas
-    /*public void rebuild_bounds()
-    {
-        boundsXMin = 9999999;
-        boundsYMin = 9999999;
-        boundsXMax = -boundsXMin;
-        boundsYMax = -boundsYMin;
-
-        for(int i=0; i<n; i++){
-            if(x_orig[i] < boundsXMin) boundsXMin = x_orig[i];
-            if(x_orig[i] > boundsXMax) boundsXMax = x_orig[i];
-            if(y_orig[i] < boundsYMin) boundsYMin = y_orig[i];
-            if(y_orig[i] > boundsYMax) boundsYMax = y_orig[i];
-        }
-
-        this.set_bounds(boundsXMin, boundsYMin, boundsXMax, boundsYMax);
-    }*/
-
     // transformuoja is funkcijos lenteles koordinaciu i ekrano koordinates
     public void transf_iEkrana(float x, float y, float[] out)
     {
@@ -101,7 +85,7 @@ public class Canvas extends JComponent{
         out[1] = this.getHeight() - (y - boundsYMin)/(boundsYMax - boundsYMin) * this.getHeight();
     }
 
-    //transformuoja is ekrano koordinaciu i funckcijos lenteles koordinates
+    //transformuoja is ekrano koordinaciu i funkcijos lenteles koordinates
     public void transf_iFunc(float x, float y, float[] out)
     {
         out[0] = x * (boundsXMax - boundsXMin)/(float)this.getWidth() + boundsXMin;
@@ -151,7 +135,15 @@ public class Canvas extends JComponent{
         Rikiuoti();   // rikiavimas
 
         // generuojame
-        sp.spline(n-1, m0, mn, x, y, m);
+        if(this.m_type == DerivType.FIRST)
+            //sc.spline1dbuildcubic(x, y, n, 1, m0, 1, mn, si);
+            sp.spline_1s(n-1, m0, mn, x, y, m);
+        else if(this.m_type == DerivType.NATURAL)
+            sp.spline_2s(n-1, 0.0f, 0.0f, x, y, m);
+            //sc.spline1dbuildcubic(x, y, n, 2, 0, 2, 0, si);
+        else
+            sp.spline_2s(n-1, m0, mn, x, y, m);
+            //sc.spline1dbuildcubic(x, y, n, 2, m0, 2, mn, si);
         
         this.repaint();// reikalinga perpiesti
     }
@@ -174,8 +166,8 @@ public class Canvas extends JComponent{
     public void drawAxes(Graphics g)
     {
         // tinklelis
-        int count = 6;
-        drawGrid(g, count);
+        int markers = 6;
+        drawGrid(g, markers);
 
         int w = this.getWidth();
         int h = this.getHeight();
@@ -185,29 +177,31 @@ public class Canvas extends JComponent{
         g.drawLine(0, mid_h, w, mid_h); // x-asis
         g.drawLine(mid_w, 0, mid_w, h); // y-asis
 
-        // markeriai        
+        // markeriai
         float y_marker = 0.02f;// 0.02% ekrano
         int hm = Math.round(h*y_marker)/2;
-        int step_w = w/count;
-        int step_h = h/count;
+        int step_w = w/markers;
+        int step_h = h/markers;
 
         float xmin = boundsXMin;
         float ymin = boundsYMax;
-        float x_step = (boundsXMax - boundsXMin)/(float)count;
-        float y_step = (boundsYMax - boundsYMin)/(float)count;
-
-        xmin -= x_step;
-
-        for(int i=0; i <= count; i++){
+        float x_step = (boundsXMax - boundsXMin)/(float)markers;
+        float y_step = (boundsYMax - boundsYMin)/(float)markers;
+        
+        for(int i=0; i <= markers; i++){
             // tekstas
             g.drawString(Float.toString(Math.round(ymin*100)/100.0f), mid_w+hm*2, i*step_h+hm/2);
 
-            xmin += x_step;
             ymin -= y_step;
             
-            if(i == count/2) continue;
+            if(i == markers/2){
+                xmin += x_step;
+                continue;
+            }
+            
             // tekstas
             g.drawString(Float.toString(Math.round(xmin*100)/100.0f), i*step_w-hm, mid_h+hm*4);
+            xmin += x_step;
 
             // markeriai
             g.drawLine(mid_w-hm, (int)(i*step_h), mid_w+hm, (int)(i*step_h)); // y-asis
@@ -229,6 +223,7 @@ public class Canvas extends JComponent{
         }
 
     }
+
     
     // piesia splaina linijomis pastoviu zingsniu
     public void drawLines(Graphics g)
@@ -245,14 +240,17 @@ public class Canvas extends JComponent{
             float t1 = t+h;
             int x0 = Math.round(t);
             int x1 = Math.round(t+h);
-            int y0 = Math.round(sp.g(n, x, y, m, t));
-            int y1 = Math.round(sp.g(n, x, y, m, t1));
+            int y0 = Math.round(sp.eval(n, x, y, m, t));
+            int y1 = Math.round(sp.eval(n, x, y, m, t1));
+            //int y0 = Math.round((float)sc.spline1dcalc(si, x0));
+            //int y1 = Math.round((float)sc.spline1dcalc(si, x1));
             g.drawLine(x0, y0, x1, y1);
             t += h;
         }
     }
 
-    public void drawGrid( Graphics g, int count )  {
+    public void drawGrid( Graphics g, int count )
+    {
         int width = this.getWidth();
         int height = this.getHeight();
         int step_w = (int)width/count;
@@ -289,14 +287,6 @@ public class Canvas extends JComponent{
     }
 
     private void Rikiuoti()  {
-
-        System.out.println("===============================================================");
-        System.out.println("===============================================================");
-        System.out.println();
-        System.out.println();
-        System.out.println("                             Pries rikiavima. x, y, orig_x, orig_y");
-        System.out.println();
-        PrintXY();
         for ( int i = 0; i < n-1; i++ )
             for ( int j = i+1; j < n; j++ ){
                 if ( x[i] > x[j] + 1e-6f )  {
@@ -318,10 +308,6 @@ public class Canvas extends JComponent{
                     y_orig[i] = tempY;
                 }
             }
-        System.out.println();
-        System.out.println("                             Po rikiavimo");
-        System.out.println();
-        PrintXY();
     }
     
     public int getn()  {
@@ -334,11 +320,5 @@ public class Canvas extends JComponent{
     
     public float getY(int sk)  {
         return y_orig[sk];
-    }
-
-    private void PrintXY()  {
-        for (  int i =0; i < n; i++ )  {
-            System.out.println( x[i]+"           "+y[i]+"           "+x_orig[i]+"           "+y_orig[i] );
-        }
     }
 }
