@@ -3,6 +3,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.Scanner;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Panel extends JFrame{
 
@@ -320,6 +321,15 @@ public class Panel extends JFrame{
         // 2 = save file
         File failas = null;
 	JFileChooser fc = new JFileChooser();
+      //  fileTypes.set
+        FileNameExtensionFilter ff;
+        // file filters
+        if ( forma == 1 )
+             ff = new FileNameExtensionFilter("Duomenu failai, *.duom", "duom");
+        else
+            ff = new FileNameExtensionFilter("Rezultatu failai,  *.rez", "rez");
+        fc.addChoosableFileFilter(ff);
+
         fc.setCurrentDirectory( new File(".") );
         if ( forma == 1 )  {
             fc.setDialogTitle("Pasirinkite faila skaitymui");
