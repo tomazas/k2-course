@@ -3,6 +3,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.Scanner;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Panel extends JFrame{
 
@@ -16,7 +17,7 @@ public class Panel extends JFrame{
     private Canvas canvas = null;
     private Langas langas = null;
     private Panel self = this;
-    
+
     public Panel(Langas frame, Canvas canvas)
     {
         super("Valdymas");
@@ -33,7 +34,7 @@ public class Panel extends JFrame{
         //
         //  meniu
         //
-        
+
         // menu juostos formavimas
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
@@ -50,7 +51,7 @@ public class Panel extends JFrame{
         //JMenuItem menuParinktys = new JMenu("Parinktys");
         //menuBar.add(menuParinktys);
 
-       
+
         //
         //            normaliosios, pirmosios, antrosios
         //
@@ -169,7 +170,7 @@ public class Panel extends JFrame{
                             System.exit(0);
                         }
                     }
-       
+
              }
      );
 
@@ -284,18 +285,18 @@ public class Panel extends JFrame{
                             try  {
                                 float x = Float.parseFloat( taskasX.getText() );
                                 float y = Float.parseFloat( taskasY.getText() );
-                                
+
                                 self.canvas.add_point(x, y, false);
                             }  catch ( NumberFormatException a )  {
                                     JOptionPane.showMessageDialog(null, "Neteisingai ivesti duomenys",
 		"Klaida", JOptionPane.ERROR_MESSAGE);
                             }
-                            
+
 			}
                  }
          );
 
-                   
+
          this.addWindowListener(new WindowListener(){
             public void windowOpened(WindowEvent e){}
             public void windowClosing(WindowEvent e){}
@@ -320,6 +321,15 @@ public class Panel extends JFrame{
         // 2 = save file
         File failas = null;
 	JFileChooser fc = new JFileChooser();
+      //  fileTypes.set
+        FileNameExtensionFilter ff;
+        // file filters
+        if ( forma == 1 )
+             ff = new FileNameExtensionFilter("Duomenu failai, *.duom", "duom");
+        else
+            ff = new FileNameExtensionFilter("Rezultatu failai,  *.rez", "rez");
+        fc.addChoosableFileFilter(ff);
+
         fc.setCurrentDirectory( new File(".") );
         if ( forma == 1 )  {
             fc.setDialogTitle("Pasirinkite faila skaitymui");

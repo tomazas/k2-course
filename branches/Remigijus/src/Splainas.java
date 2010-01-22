@@ -35,17 +35,17 @@ public class Splainas {
         float c[] = new float[n+1];
         float d[] = new float[n+1];
         float h[] = new float[n+1];
-        
+
         /*
-        
+
           A matrica:
-        	
+
         	|a b c      |
         	| a b c     |
         	|   ...     |
         	|    a b c  |
         	|     a b c |
-        
+
         */
 
         // a,b,c,d,h - temp masyvai
@@ -69,7 +69,7 @@ public class Splainas {
     public float g(int n, float x[], float y[], float m[], float t)
     {
         if(t < x[0] || t > x[n-1]) return 0.0f;
-        
+
         int i = 1;
         while(x[i] < t) i++;
         float h = x[i] - x[i-1];
