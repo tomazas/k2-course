@@ -10,7 +10,7 @@ public class Panel extends JFrame{
     final int WIDTH = 200;
     final int HEIGHT = 400;
 
-    JButton ivesti;
+    JButton ivesti, nustat;
     JRadioButton normal, pirmos, antros, pele, klav;
     JLabel taskmo, taskmn, taskx, tasky;
     JTextField taskasmo, taskasmn, taskasX, taskasY;
@@ -118,12 +118,15 @@ public class Panel extends JFrame{
         taskasmo = new JTextField();
         self.add(taskasmo);
         taskasmo.setBounds(65, 100, 40, 20);
+        taskasmo.setText("0.0");
         taskasmo.setEnabled(false);
+        
 
         taskasmn = new JTextField();
         self.add(taskasmn);
         taskasmn.setBounds(65, 120, 40, 20);
         taskasmn.setEnabled(false);
+        taskasmn.setText("0.0");
 
         taskasX = new JTextField();
         self.add(taskasX);
@@ -136,15 +139,20 @@ public class Panel extends JFrame{
         taskasY.setEnabled(false);
 
         //
-        //          mygtukas
+        //          mygtukai
         //
         ivesti = new JButton("Ivesti");
         self.add(ivesti);
         ivesti.setBounds(30, 260, 80, 20);
         ivesti.setEnabled(false);
 
+        nustat = new JButton("Nustatyti");
+        self.add(nustat);
+        nustat.setBounds(30, 142, 90, 20);
+        nustat.setEnabled(true);
 
-                // Open listener
+
+        // Open listener
         menuFailaiIsFailo.addActionListener(
             new ActionListener(){
                     public void actionPerformed(ActionEvent e)  {
@@ -215,7 +223,7 @@ public class Panel extends JFrame{
                             antros.setSelected(false);
                             taskmo.setEnabled(false);
                             taskmn.setEnabled(false);
-                            taskasmo.setEnabled(false);;
+                            taskasmo.setEnabled(false);
                             taskasmn.setEnabled(false);
 			}
                  }
@@ -278,6 +286,35 @@ public class Panel extends JFrame{
 			}
                  }
          );
+
+        nustat.addActionListener(new ActionListener(){
+		public void actionPerformed(ActionEvent e)  {
+                            try  {
+                                float m0 = 0.0f;
+                                float mn = 0.0f;
+                                Canvas.DerivType deriv = Canvas.DerivType.NATURAL;
+
+                                if(normal.isSelected() == false)
+                                {
+                                    m0 = Float.parseFloat( taskasmo.getText() );
+                                    mn = Float.parseFloat( taskasmn.getText() );
+
+                                    if(pirmos.isSelected())
+                                        deriv = Canvas.DerivType.FIRST;
+                                    else if(antros.isSelected())
+                                        deriv = Canvas.DerivType.SECOND;
+                                }
+                                
+                                self.canvas.set_deriv(deriv, m0, mn);
+                                self.canvas.build();
+
+                            }  catch ( NumberFormatException a )  {
+                                    JOptionPane.showMessageDialog(null, "Neteisingai ivesti duomenys",
+									"Klaida", JOptionPane.ERROR_MESSAGE);
+                            }
+
+                }
+         });
 
         ivesti.addActionListener(
 		new ActionListener(){
