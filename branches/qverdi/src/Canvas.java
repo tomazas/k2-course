@@ -2,6 +2,7 @@
 
 import java.awt.*;
 import javax.swing.*;
+import java.util.*;
 
 public class Canvas extends JComponent{
 
@@ -136,11 +137,14 @@ public class Canvas extends JComponent{
 
         // generuojame
         if(this.m_type == DerivType.FIRST)
+            //sc.spline1dbuildcubic(x, y, n, 1, m0, 1, mn, si);
             sp.spline_1s(n-1, m0, mn, x, y, m);
         else if(this.m_type == DerivType.NATURAL)
             sp.spline_2s(n-1, 0.0f, 0.0f, x, y, m);
+            //sc.spline1dbuildcubic(x, y, n, 2, 0, 2, 0, si);
         else
             sp.spline_2s(n-1, m0, mn, x, y, m);
+            //sc.spline1dbuildcubic(x, y, n, 2, m0, 2, mn, si);
         
         this.repaint();// reikalinga perpiesti
     }
@@ -217,6 +221,7 @@ public class Canvas extends JComponent{
         }
 
     }
+
     
     // piesia splaina linijomis pastoviu zingsniu
     public void drawLines(Graphics g)
@@ -235,6 +240,8 @@ public class Canvas extends JComponent{
             int x1 = Math.round(t+h);
             int y0 = Math.round(sp.eval(n, x, y, m, t));
             int y1 = Math.round(sp.eval(n, x, y, m, t1));
+            //int y0 = Math.round((float)sc.spline1dcalc(si, x0));
+            //int y1 = Math.round((float)sc.spline1dcalc(si, x1));
             g.drawLine(x0, y0, x1, y1);
             t += h;
         }
