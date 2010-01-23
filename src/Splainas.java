@@ -63,23 +63,11 @@ public class Splainas {
         float d[] = new float[n+1];
         float h[] = new float[n+1];
         
-        /*
-        
-          A matrica:
-        	
-        	|a b c      |
-        	| a b c     |
-        	|   ...     |
-        	|    a b c  |
-        	|     a b c |
-        
-        */
-
         for(int i=1; i<=n; i++)
             h[i] = x[i] - x[i-1];
         
         for(int i=1; i<n; i++){
-        	    if(i==1) a[i] = 0.0f; else a[i] = h[i]/6.0f;
+        	if(i==1) a[i] = 0.0f; else a[i] = h[i]/6.0f;
                 b[i] = -(h[i]+h[i+1])/3.0f;
                 if(i==n-1) c[i] = 0.0f; else c[i] = h[i+1]/6.0f;
                 d[i] = y[i-1]/h[i] - y[i]/h[i] - y[i]/h[i+1] + y[i+1]/h[i+1];

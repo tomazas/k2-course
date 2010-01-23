@@ -22,7 +22,7 @@ public class Lentele {
             y.add(scanner.nextFloat());
         }
 
-        System.out.println("tasku ivesta: "+x.size());
+        //System.out.println("tasku ivesta: "+x.size());
 
         this.RastiRibas();
     }
@@ -43,15 +43,26 @@ public class Lentele {
             if(y.get(i) > yMax) yMax = y.get(i);
         }
 
+        // prapleciam ribas +15%
+        float borderX = (xMax - xMin) * 0.15f;
+        float borderY = (yMax - yMin) * 0.15f;
+
+        xMin = xMin - borderX;
+        yMin = yMin - borderY;
+        xMax = xMax + borderX;
+        yMax = yMax + borderY;
+
         System.out.printf("bounds: x: %.2f %.2f y: %.2f %.2f\n",xMin,xMax,yMin,yMax);
     }
 
     // uzpildo canvas struktura grafiko duomenimis
     public void Uzpildyti(Canvas canvas)
     {
-        canvas.set_bounds(xMin, yMin, xMax, yMax);
+        //canvas.set_bounds(xMin, yMin, xMax, yMax);
         
         for(int i=0; i<x.size(); i++)
             canvas.add_point(x.get(i), y.get(i), false);
+
+        canvas.set_bounds(xMin, yMin, xMax, yMax);
     }
 }
