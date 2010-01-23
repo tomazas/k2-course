@@ -7,13 +7,14 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Panel extends JFrame{
 
-    final int WIDTH = 200;
-    final int HEIGHT = 400;
+    final int WIDTH = 180;
+    final int HEIGHT = 380;
 
-    JButton ivesti, nustat;
-    JRadioButton normal, pirmos, antros, pele, klav;
-    JLabel taskmo, taskmn, taskx, tasky;
-    JTextField taskasmo, taskasmn, taskasX, taskasY;
+    private JButton ivesti, nustat;
+    private JRadioButton normal, pirmos, antros, pele, klav;
+    private JLabel taskmo, taskmn, taskx, tasky;
+    private JTextField taskasmo, taskasmn, taskasX, taskasY;
+    private JCheckBox cbox;
     private Canvas canvas = null;
     private Langas langas = null;
     private Panel self = this;
@@ -27,6 +28,7 @@ public class Panel extends JFrame{
 
         // style
         this.setLayout(null);
+        this.setResizable(false);
         int cx = langas.getX()+langas.getWidth();
         int cy = langas.getY();
         this.setBounds(cx,cy,WIDTH,HEIGHT);
@@ -38,25 +40,61 @@ public class Panel extends JFrame{
         // menu juostos formavimas
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
+        
         // Failai ir jo sub items
-        JMenuItem menuFailai = new JMenu("Failai");
+        JMenuItem menuFailai = new JMenu("Failas");
         menuBar.add(menuFailai);
 
-        JMenuItem menuFailaiIsFailo = new JMenuItem("Is failo");
+        JMenuItem menuFailaiIsFailo = new JMenuItem("Ivesti");
         menuFailai.add( menuFailaiIsFailo );
 
-        JMenuItem menuFailaiIFaila = new JMenuItem("I faila");
+        JMenuItem menuFailaiIFaila = new JMenuItem("Issaugoti");
         menuFailai.add( menuFailaiIFaila );
 
-        //JMenuItem menuParinktys = new JMenu("Parinktys");
-        //menuBar.add(menuParinktys);
+        menuFailai.add(new JSeparator());
 
-       
+        JMenuItem menuExit = new JMenuItem("Baigti");
+        menuExit.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                System.exit(0);
+            }
+        });
+        menuFailai.add( menuExit );
+
+        // nustatymai
+        JMenuItem menuKoord = new JMenu("Nustatymai");
+        menuBar.add(menuKoord);
+
+        JMenuItem nustAsys = new JMenuItem("Asys");
+        nustAsys.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                new Parametrai(self.canvas);
+            }
+         });
+        menuKoord.add(nustAsys);
+
+        // apie
+        JMenuItem menuApie = new JMenu("Apie");
+        menuBar.add(menuApie);
+        JMenuItem apieProg = new JMenuItem("Programa");
+        menuApie.add(apieProg);
+        apieProg.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                JOptionPane.showMessageDialog(null,
+                "Programa sudaro kubini interpoliacini splaina is\n" +
+                "eksperimento duomenu pagal nurodytas krastines\nsalygas."+
+                "\n\nProgramos autoriai:\n"+
+                "   IF-8/7 Remigijus Valys\n   IF-8/7 Tomas Uktveris\n"+
+                "\nParasyta: 2010m. KTU",
+	        "Apie", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
         //
-        //            normaliosios, pirmosios, antrosios
+        //  normaliosios, pirmosios, antrosios
         //
 
-        normal = new JRadioButton("Normalios salygos");
+        normal = new JRadioButton("Naturalios salygos");
         self.add(normal);
         normal.setBounds(10, 30, 150, 20);
         normal.setSelected(true);
@@ -84,11 +122,11 @@ public class Panel extends JFrame{
         //            info labels
         //
 
-        JLabel salygos = new JLabel( "Krastines salygos ");
+        JLabel salygos = new JLabel( "Krastines salygos:");
         self.add(salygos);
         salygos.setBounds(5, 5, 150, 20);
 
-        taskmo = new JLabel("m(o)");
+        taskmo = new JLabel("m(0)");
         self.add(taskmo);
         taskmo.setBounds(30, 100, 30, 20);
         taskmo.setEnabled(false);
@@ -98,7 +136,7 @@ public class Panel extends JFrame{
         taskmn.setBounds(30, 120, 30, 20);
         taskmn.setEnabled(false);
 
-        JLabel taskgen = new JLabel("Tasku generavimas");
+        JLabel taskgen = new JLabel("Tasku generavimas:");
         self.add(taskgen);
         taskgen.setBounds(5, 160, 150, 20);
 
@@ -150,6 +188,20 @@ public class Panel extends JFrame{
         self.add(nustat);
         nustat.setBounds(30, 142, 90, 20);
         nustat.setEnabled(true);
+
+        //
+        // Checkboxes
+        //
+        cbox = new JCheckBox("Tinklelis");
+        cbox.setBounds(10, 300, 150, 20);
+        cbox.setSelected(true);
+        cbox.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                self.canvas.set_grid(cbox.isSelected());
+                self.canvas.repaint();
+            }
+        });
+        this.add(cbox);
 
 
         // Open listener
@@ -362,9 +414,9 @@ public class Panel extends JFrame{
         FileNameExtensionFilter ff;
         // file filters
         if ( forma == 1 )
-             ff = new FileNameExtensionFilter("Duomenu failai, *.duom", "duom");
+             ff = new FileNameExtensionFilter("Duomenu failai (*.duom)", "duom");
         else
-            ff = new FileNameExtensionFilter("Rezultatu failai,  *.rez", "rez");
+            ff = new FileNameExtensionFilter("Rezultatu failai  (*.rez)", "rez");
         fc.addChoosableFileFilter(ff);
 
         fc.setCurrentDirectory( new File(".") );

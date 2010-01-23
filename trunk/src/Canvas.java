@@ -33,6 +33,7 @@ public class Canvas extends JComponent{
     private DerivType m_type = DerivType.NATURAL;
     private float m0 = 0.0f;
     private float mn = 0.0f;
+    private boolean m_grid = true;
 
     // ekrano deze
     private float boundsXMin;
@@ -65,17 +66,29 @@ public class Canvas extends JComponent{
         return this.bMouseActive;
     }
 
+    // ijungia/isjungia tinkleli
+    public void set_grid(boolean state)
+    {
+        this.m_grid = state;
+    }
+
     // nustato funkcijos koordinaciu ribas visam ekranui
     public void set_bounds(float xMin, float yMin, float xMax, float yMax)
     {
-        float borderX = (xMax - xMin) * 0.1f;
-        float borderY = (yMax - yMin) * 0.1f;
+        //float borderX = 0;//(xMax - xMin) * 0.1f;
+        //float borderY = 0;//;(yMax - yMin) * 0.1f;
         // + 10% laisvo ploto aplink
-        boundsXMin = xMin - borderX;
-        boundsYMin = yMin - borderY;
-        boundsXMax = xMax + borderX;
-        boundsYMax = yMax + borderY;
+        boundsXMin = xMin;// - borderX;
+        boundsYMin = yMin;// - borderY;
+        boundsXMax = xMax;// + borderX;
+        boundsYMax = yMax;// + borderY;
         this.rescale();
+    }
+
+    // grazina ekrano koordinaciu ribas
+    public float[] get_bounds(){
+        float b[] = {boundsXMin, boundsYMin, boundsXMax, boundsYMax};
+        return b;
     }
 
     // transformuoja is funkcijos lenteles koordinaciu i ekrano koordinates
@@ -90,6 +103,32 @@ public class Canvas extends JComponent{
     {
         out[0] = x * (boundsXMax - boundsXMin)/(float)this.getWidth() + boundsXMin;
         out[1] = (this.getHeight()-y) * (boundsYMax - boundsYMin)/(float)this.getHeight() + boundsYMin;
+    }
+
+    // perskaiciuoja dezes/ribu matmenis
+    public void bound_check()
+    {
+        float xMin = 9999999;
+        float yMin = 9999999;
+        float xMax = -xMin;
+        float yMax = -yMin;
+
+        if(n <= 1){
+            xMin = -1;
+            yMin = -1;
+            xMax = 1;
+            yMax = 1;
+        }
+
+        for(int i=0; i<n; i++)
+        {
+            if(x_orig[i] < xMin) xMin = x_orig[i];
+            if(x_orig[i] > xMax) xMax = x_orig[i];
+            if(y_orig[i] < yMin) yMin = y_orig[i];
+            if(y_orig[i] > yMax) yMax = y_orig[i];
+        }
+
+        this.set_bounds(xMin, yMin, xMax, yMax);
     }
 
     // prideda nauja taska
@@ -107,6 +146,7 @@ public class Canvas extends JComponent{
             // transformuoti nereikia, nes taskai atidedami 1:1 ekrane
             this.x[n] = xp;
             this.y[n] = yp;
+            n += 1;
         }else{
             // issaugom realias koordinates
             this.x_orig[n] = xp;
@@ -115,9 +155,9 @@ public class Canvas extends JComponent{
             this.transf_iEkrana(xp, yp, o);
             this.x[n] = o[0];
             this.y[n] = o[1];
+            n += 1;
+            this.bound_check();
         }
-
-        n += 1;
 
         this.build();
         this.repaint();
@@ -167,7 +207,8 @@ public class Canvas extends JComponent{
     {
         // tinklelis
         int markers = 6;
-        drawGrid(g, markers);
+        if(this.m_grid)
+            drawGrid(g, markers);
 
         int w = this.getWidth();
         int h = this.getHeight();
