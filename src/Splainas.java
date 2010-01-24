@@ -5,14 +5,6 @@ public class Splainas {
     public Splainas(){}
 
     // sprendzia triistrizine matrica: Ax = d
-    /*
-      A matrica:
-        | b c      |
-        | a b c    |
-        |   ...    |
-        |    a b c |
-        |      a b |
-     */
     // a, b, c - istrizainiu reiksmiu masyvai
     // x - nezinomuju matrica stulpelis
     private void spresti_1(int n, float a[], float b[], float c[], float d[], float x[]){
@@ -29,11 +21,11 @@ public class Splainas {
             x[k] = (d[k] - c[k]*x[k+1])/b[k];
     }
 
+    // sprendzia triistrizine matrica: Ax = d
     private void spresti_2(int n, float a[], float b[], float c[], float d[], float x[]){
         
         float s[] = new float[n+2];
         float e[] = new float[n+2];
-        // e, s - temp matrica
         s[1] = 0.0f;
         e[1] = 0.0f;
 
@@ -50,7 +42,7 @@ public class Splainas {
                 x[i] = s[i+1]*x[i+1] + e[i+1];
     }
 
-    // Splainas su antrosiomis isvestinemis
+    // splaino konstravimas pagal antrasias isvestines
     // m0 ir mn - f(x) antruju isvestiniu reiksmes taskuose x0 ir xn
     // x[], y[] - splaino taskai
     // n - intervalu sk
@@ -63,7 +55,7 @@ public class Splainas {
         float h[] = new float[n+1];
         
         for(int i=1; i<=n; i++)
-            h[i] = x[i] - x[i-1];
+            h[i] = x[i] - x[i-1]; // zingsnis
         
         for(int i=1; i<n; i++){
         	if(i==1) a[i] = 0.0f; else a[i] = h[i]/6.0f;
@@ -79,9 +71,9 @@ public class Splainas {
         m[n] = mn;
     }
 
-    // Splainas su pirmosiomis isvestinemis
+    // splaino konstravimas pagal pirmasias isvestines
     // m0 ir mn - f(x) pirmuju isvestiniu reiksmes taskuose x0 ir xn
-    // x[], y[] - splaino taskai
+    // x[], y[] - splaino taskai, m[] - isvestiniu reiksmes
     // n - intervalu sk (tasku n+1)
     public void spline_1s(int n, float m0, float mn, float x[], float y[], float m[])
     {
@@ -92,7 +84,7 @@ public class Splainas {
         float h[] = new float[n+1];
 
         for(int i=0; i <= n-1; i++)
-            h[i] = x[i+1] - x[i];
+            h[i] = x[i+1] - x[i]; // zingsnis
 
         for(int i=0; i <= n; i++)
         {
