@@ -15,7 +15,6 @@ public class Splainas {
      */
     // a, b, c - istrizainiu reiksmiu masyvai
     // x - nezinomuju matrica stulpelis
-    // http://www.cfd-online.com/Wiki/Tridiagonal_matrix_algorithm_-_TDMA_(Thomas_algorithm)
     private void spresti_1(int n, float a[], float b[], float c[], float d[], float x[]){
 
         // sistemos sprendimas
@@ -99,26 +98,26 @@ public class Splainas {
         {
             if(i == 0){
                 a[0] = 0.0f;
-                b[0] = 2*h[0];
-                c[0] = h[0];
-                d[0] = 3.0f*(y[1]-y[0])/h[0] - 3.0f*m0;
+                b[0] = h[0]/3.0f;
+                c[0] = h[0]/6.0f;
+                d[0] = (y[1]-y[0])/h[0] - m0;
             }
             else if(i == n)
             {
-                a[n] = h[n-1];
-                b[n] = 2*h[n-1];
+                a[n] = h[n-1]/6.0f;
+                b[n] = h[n-1]/3.0f;
                 c[n] = 0.0f;
-                d[n] = 3.0f*mn - 3.0f*(y[n] - y[n-1])/h[n-1];
+                d[n] = mn - (y[n] - y[n-1])/h[n-1];
             }
             else
             {
-                a[i] = h[i-1];
-                b[i] = 2*(h[i-1]+h[i]);
-                c[i] = h[i];
-                d[i] = 3.0f*(y[i+1]-y[i])/h[i] - 3.0f*(y[i]-y[i-1])/h[i-1];
+                a[i] = h[i-1]/6.0f;
+                b[i] = (h[i-1]+h[i])/3.0f;
+                c[i] = h[i]/6.0f;
+                d[i] = (y[i+1]-y[i])/h[i] - (y[i]-y[i-1])/h[i-1];
             }
         }
-        
+
         // sistemos sprendimas
         spresti_1(n, a, b, c, d, m);
     }

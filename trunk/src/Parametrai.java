@@ -12,7 +12,6 @@ public class Parametrai extends JDialog{
 
     public Parametrai(Canvas canvas)
     {
-        //super(null, "Nustatymai");
         this.setTitle("Nustatymai");
         this.canvas = canvas;
 
