@@ -244,10 +244,12 @@ public class Panel extends JFrame{
 
                                 PrintWriter rasymui;
                                 rasymui = new PrintWriter(failas);
-                                //rasymui.println("Ivestos/Nurodytos koodrinates");
-                                //rasymui.println("   X     Y");
+                                rasymui.println("    x      y      m");
                                 for (int i = 0; i < self.canvas.getn(); i ++ )
-                                    rasymui.printf("%.6f %.6f\n", self.canvas.getX(i), self.canvas.getY(i));
+                                    rasymui.printf("%.6f %.6f %.6f\n",
+                                            self.canvas.getX(i),
+                                            self.canvas.getY(i),
+                                            self.canvas.getM(i));
                                 rasymui.flush();
                             }
                             catch ( NumberFormatException a )  {

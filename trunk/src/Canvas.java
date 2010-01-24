@@ -9,7 +9,7 @@ public class Canvas extends JComponent{
     private SplineCode sc = new SplineCode();
     private spline1dinterpolant si = new spline1dinterpolant();
     
-    private int N = 300; // TODO: change to dynamic size
+    private int N = 1000; 
     private float x_orig[] = new float[N];
     private float y_orig[] = new float[N];
    
@@ -353,6 +353,10 @@ public class Canvas extends JComponent{
     
     public int getn()  {
         return n;
+    }
+
+    public float getM(int sk)  {
+        return m[sk];
     }
 
     public float getX(int sk)  {
