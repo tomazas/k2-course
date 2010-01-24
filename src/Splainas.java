@@ -100,14 +100,14 @@ public class Splainas {
                 a[0] = 0.0f;
                 b[0] = h[0]/3.0f;
                 c[0] = h[0]/6.0f;
-                d[0] = (y[1]-y[0])/h[0] - m0;
+                d[0] = (y[1]-y[0])/h[0] + m0;
             }
             else if(i == n)
             {
                 a[n] = h[n-1]/6.0f;
                 b[n] = h[n-1]/3.0f;
                 c[n] = 0.0f;
-                d[n] = mn - (y[n] - y[n-1])/h[n-1];
+                d[n] = -mn - (y[n] - y[n-1])/h[n-1];
             }
             else
             {
