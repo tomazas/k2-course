@@ -6,8 +6,6 @@ import javax.swing.*;
 public class Canvas extends JComponent{
 
     private Splainas sp = new Splainas();
-    private SplineCode sc = new SplineCode();
-    private spline1dinterpolant si = new spline1dinterpolant();
     
     private int N = 1000; 
     private float x_orig[] = new float[N];
@@ -176,14 +174,11 @@ public class Canvas extends JComponent{
 
         // generuojame
         if(this.m_type == DerivType.FIRST)
-            //sc.spline1dbuildcubic(x, y, n, 1, m0, 1, mn, si);
             sp.spline_1s(n-1, m0, mn, x, y, m);
         else if(this.m_type == DerivType.NATURAL)
             sp.spline_2s(n-1, 0.0f, 0.0f, x, y, m);
-            //sc.spline1dbuildcubic(x, y, n, 2, 0, 2, 0, si);
         else
             sp.spline_2s(n-1, m0, mn, x, y, m);
-            //sc.spline1dbuildcubic(x, y, n, 2, m0, 2, mn, si);
         
         this.repaint();// reikalinga perpiesti
     }
