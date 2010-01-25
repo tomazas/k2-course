@@ -15,6 +15,7 @@ public class Canvas extends JComponent{
     private float x[] = new float[N];
     private float y[] = new float[N];
     private float m[] = new float[N];
+    private float m_orig[] = new float[N];
     
     private int n = 0; // tasku skaicius
     private boolean dirty = true; // ar reikia per-generuoti splaina?
@@ -173,12 +174,16 @@ public class Canvas extends JComponent{
         Rikiuoti();   // rikiavimas
 
         // generuojame
-        if(this.m_type == DerivType.FIRST)
+        if(this.m_type == DerivType.FIRST){
             sp.spline_1s(n-1, m0, mn, x, y, m);
-        else if(this.m_type == DerivType.NATURAL)
+            sp.spline_1s(n-1, m0, mn, x_orig, y_orig, m_orig);
+        }else if(this.m_type == DerivType.NATURAL){
             sp.spline_2s(n-1, 0.0f, 0.0f, x, y, m);
-        else
+            sp.spline_2s(n-1, 0.0f, 0.0f, x_orig, y_orig, m_orig);
+        }else{
             sp.spline_2s(n-1, m0, mn, x, y, m);
+            sp.spline_2s(n-1, m0, mn, x_orig, y_orig, m_orig);
+        }
         
         this.repaint();// reikalinga perpiesti
     }
@@ -351,7 +356,7 @@ public class Canvas extends JComponent{
     }
 
     public float getM(int sk)  {
-        return m[sk];
+        return m_orig[sk];
     }
 
     public float getX(int sk)  {
