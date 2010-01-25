@@ -246,7 +246,7 @@ public class Panel extends JFrame{
                                 rasymui = new PrintWriter(failas);
                                 rasymui.println("    x      y      m");
                                 for (int i = 0; i < self.canvas.getn(); i ++ )
-                                    rasymui.printf("%.6f %.6f %.6f\n",
+                                    rasymui.printf("%.6f\t%.6f\t%.6f\n",
                                             self.canvas.getX(i),
                                             self.canvas.getY(i),
                                             self.canvas.getM(i));
